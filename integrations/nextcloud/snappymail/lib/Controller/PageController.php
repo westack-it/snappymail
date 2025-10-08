@@ -8,6 +8,12 @@ use OCA\SnappyMail\ContentSecurityPolicy;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 
+// SnappyMail Nextcoud 32 compatibility workaound - START
+// src: https://github.com/the-djmaze/snappymail/issues/1994#issuecomment-3366086651
+
+use OCP\INavigationManager;  // <<<<<<<<<<<< add this 
+use OCP\Server; // <<<<<<<<<<<< add this 
+
 class PageController extends Controller
 {
 	/**
@@ -17,7 +23,7 @@ class PageController extends Controller
 	public function index()
 	{
 		$config = \OC::$server->getConfig();
-
+        $nav = Server::get(INavigationManager::class);  // <<<<<<<<<<<< add this 
 		$bAdmin = false;
 		if (!empty($_SERVER['QUERY_STRING'])) {
 			SnappyMailHelper::loadApp();
@@ -28,7 +34,8 @@ class PageController extends Controller
 		}
 
 		if (!$bAdmin && $config->getAppValue('snappymail', 'snappymail-no-embed')) {
-			\OC::$server->getNavigationManager()->setActiveEntry('snappymail');
+            // \OC::$server->getNavigationManager()->setActiveEntry('snappymail'); // <<<<<<<<<<<< Comment this
+            $nav->setActiveEntry('snappymail');  // <<<<<<<<<<<< add this 
 			\OCP\Util::addScript('snappymail', 'snappymail');
 			\OCP\Util::addStyle('snappymail', 'style');
 			SnappyMailHelper::startApp();
@@ -43,7 +50,10 @@ class PageController extends Controller
 			return $response;
 		}
 
-		\OC::$server->getNavigationManager()->setActiveEntry('snappymail');
+		// \OC::$server->getNavigationManager()->setActiveEntry('snappymail'); // <<<<<<<<<<<< Comment this
+        $nav->setActiveEntry('snappymail');  // <<<<<<<<<<<< add this
+
+// SnappyMail Nextcoud 32 compatibility workaound - END
 
 		\OCP\Util::addStyle('snappymail', 'embed');
 
