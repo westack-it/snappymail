@@ -39,8 +39,6 @@ jobs:
           # This generates 'latest' and the commit SHA (e.g., sha-82931a)
           tags: |
             type=raw,value=latest
-            type=sha
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
